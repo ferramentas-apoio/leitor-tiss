@@ -580,8 +580,8 @@ export class UIManager {
     return guias.filter(g =>
       g.guiaPrincipal.toLowerCase().includes(term) ||
       g.numeroGuiaPrestador.toLowerCase().includes(term) ||
-      g.numeroCarteira.toLowerCase().includes(term) ||
-      g.nomeProfissional.toLowerCase().includes(term) ||
+      g.dadosBeneficiario.numeroCarteira.toLowerCase().includes(term) ||
+      g.profissionalSolicitante.nomeProfissional.toLowerCase().includes(term) ||
       g.nomeContratadoSolicitante.toLowerCase().includes(term) ||
       g.senha.toLowerCase().includes(term) ||
       g.CNES.toLowerCase().includes(term) ||
@@ -671,9 +671,9 @@ export class UIManager {
       const cells: [string, string][] = [
         [guia.guiaPrincipal, ''],
         [guia.numeroGuiaPrestador, ''],
-        [guia.numeroCarteira, ''],
+        [guia.dadosBeneficiario.numeroCarteira, ''],
         [this.formatDate(guia.dataAutorizacao), ''],
-        [this.formatCurrency(guia.valorTotalGeral), 'text-end'],
+        [this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0), 'text-end'],
       ];
 
       for (const [text, cls] of cells) {
@@ -806,7 +806,25 @@ export class UIManager {
         <span class="badge bg-light text-dark border version-badge">
           Guia ${index + 1} de ${lote.guias.length}
         </span>
-        <span class="ms-auto fw-semibold" style="color: var(--tiss-primary);">R$ ${this.formatCurrency(guia.valorTotalGeral)}</span>
+        <span class="ms-auto fw-semibold" style="color: var(--tiss-primary);">R$ ${this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0)}</span>
+      </div>
+
+      <div class="detail-section">
+        <h6><i class="bi bi-hash me-1"></i>Transação</h6>
+        <div class="row">
+          <div class="col-md-4 detail-field">
+            <strong>Sequencial Transação</strong>
+            <span>${escapeHtml(guia.sequencialTransacao)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Data Registro</strong>
+            <span>${escapeHtml(this.formatDate(guia.dataRegistroTransacao))}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Hora Registro</strong>
+            <span>${escapeHtml(guia.horaRegistroTransacao)}</span>
+          </div>
+        </div>
       </div>
 
       <div class="detail-section">
@@ -824,9 +842,27 @@ export class UIManager {
             <strong>Nº Guia Operadora</strong>
             <span>${escapeHtml(guia.numeroGuiaOperadora)}</span>
           </div>
-          <div class="col-md-6 detail-field">
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h6><i class="bi bi-person-badge me-1"></i>Beneficiário</h6>
+        <div class="row">
+          <div class="col-md-4 detail-field">
             <strong>Nº Carteira</strong>
-            <span>${escapeHtml(guia.numeroCarteira)}</span>
+            <span>${escapeHtml(guia.dadosBeneficiario.numeroCarteira)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Nome Beneficiário</strong>
+            <span>${escapeHtml(guia.dadosBeneficiario.nomeBeneficiario)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>CNS</strong>
+            <span>${escapeHtml(guia.dadosBeneficiario.CNS)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Atendimento RN</strong>
+            <span>${escapeHtml(guia.dadosBeneficiario.atendimentoRN)}</span>
           </div>
         </div>
       </div>
@@ -854,7 +890,15 @@ export class UIManager {
         <div class="row">
           <div class="col-md-6 detail-field">
             <strong>Profissional</strong>
-            <span>${escapeHtml(guia.nomeProfissional)}</span>
+            <span>${escapeHtml(guia.profissionalSolicitante.nomeProfissional)}</span>
+          </div>
+          <div class="col-md-6 detail-field">
+            <strong>Conselho Profissional</strong>
+            <span>${escapeHtml(guia.profissionalSolicitante.codigoConselhoProfissional)} - ${escapeHtml(guia.profissionalSolicitante.numeroConselhoProfissional)}/${escapeHtml(guia.profissionalSolicitante.UFConselho)}</span>
+          </div>
+          <div class="col-md-6 detail-field">
+            <strong>CBO</strong>
+            <span>${escapeHtml(guia.profissionalSolicitante.CBO)}</span>
           </div>
           <div class="col-md-6 detail-field">
             <strong>Contratado</strong>
@@ -879,9 +923,23 @@ export class UIManager {
         <h6><i class="bi bi-hospital me-1"></i>Executante</h6>
         <div class="row">
           <div class="col-md-4 detail-field">
+            <strong>Nome Contratado</strong>
+            <span>${escapeHtml(guia.contratadoExecutante.nomeContratadoExecutante)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Código na Operadora</strong>
+            <span>${escapeHtml(guia.contratadoExecutante.codigoNaOperadoraExecutante)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
             <strong>CNES</strong>
             <span>${escapeHtml(guia.CNES)}</span>
           </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h6><i class="bi bi-clipboard2-pulse me-1"></i>Atendimento</h6>
+        <div class="row">
           <div class="col-md-4 detail-field">
             <strong>Tipo Atendimento</strong>
             <span>${escapeHtml(guia.tipoAtendimento)}</span>
@@ -889,6 +947,48 @@ export class UIManager {
           <div class="col-md-4 detail-field">
             <strong>Regime Atendimento</strong>
             <span>${escapeHtml(guia.regimeAtendimento)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Tipo Consulta</strong>
+            <span>${escapeHtml(guia.tipoConsulta)}</span>
+          </div>
+          <div class="col-12 detail-field">
+            <strong>Observação</strong>
+            <span>${escapeHtml(guia.observacao)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h6><i class="bi bi-currency-dollar me-1"></i>Valores</h6>
+        <div class="row">
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Procedimentos</strong>
+            <span>${escapeHtml(guia.valores.valorTotalProcedimentos)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Taxas/Alugueis</strong>
+            <span>${escapeHtml(guia.valores.valorTotalTaxasAlugueis)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Materiais</strong>
+            <span>${escapeHtml(guia.valores.valorTotalMateriais)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total OPME</strong>
+            <span>${escapeHtml(guia.valores.valorTotalOPME)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Medicamentos</strong>
+            <span>${escapeHtml(guia.valores.valorTotalMedicamentos)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Gases Medicinais</strong>
+            <span>${escapeHtml(guia.valores.valorTotalGasesMedicinais)}</span>
+          </div>
+          <div class="col-md-4 detail-field">
+            <strong>Valor Total Geral</strong>
+            <span class="fw-bold text-primary">${escapeHtml(guia.valores.valorTotalGeral)}</span>
           </div>
         </div>
       </div>
@@ -915,29 +1015,37 @@ export class UIManager {
         <td class="text-center">${parseInt(proc.quantidadeExecutada) || 0}</td>
         <td class="text-end">${this.formatCurrency(parseFloat(proc.valorUnitario) || 0)}</td>
         <td class="text-end">${this.formatCurrency(parseFloat(proc.valorTotal) || 0)}</td>
+        <td class="text-center">${escapeHtml(proc.grauParticipacao)}</td>
+        <td class="text-center">${escapeHtml(proc.reducaoAcrescimo)}</td>
+        <td>${escapeHtml(proc.viaAcesso)}</td>
+        <td>${escapeHtml(proc.tecnicaUtilizada)}</td>
       </tr>
     `).join('');
 
-    const thStyle = 'font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:#6c757d;font-weight:600;padding:0.5rem 0.6rem';
+    const thStyle = 'font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:#6c757d;font-weight:600;padding:0.5rem 0.4rem';
 
     return `
       <div class="table-responsive rounded-2 border">
         <table class="table table-sm table-hover align-middle mb-0">
           <thead style="background:#f8f9fa;">
             <tr>
-              <th class="text-center" style="${thStyle};width:44px">#</th>
-              <th style="${thStyle}">C&oacute;digo</th>
-              <th style="${thStyle}">Descri&ccedil;&atilde;o</th>
-              <th class="text-center" style="${thStyle};width:55px">Qtd</th>
-              <th class="text-end" style="${thStyle};width:105px">Valor Unit.</th>
-              <th class="text-end" style="${thStyle};width:105px">Valor Total</th>
+              <th class="text-center" style="${thStyle};width:40px">#</th>
+              <th style="${thStyle};min-width:120px">Código</th>
+              <th style="${thStyle};min-width:200px">Descrição</th>
+              <th class="text-center" style="${thStyle};width:45px">Qtd</th>
+              <th class="text-end" style="${thStyle};width:90px">Valor Unit.</th>
+              <th class="text-end" style="${thStyle};width:90px">Valor Total</th>
+              <th class="text-center" style="${thStyle};width:60px">Grau</th>
+              <th class="text-center" style="${thStyle};width:70px">Red./Acr.</th>
+              <th style="${thStyle};width:90px">Via Acesso</th>
+              <th style="${thStyle};width:100px">Técnica</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
           <tfoot>
             <tr style="background: var(--tiss-primary-soft);">
-              <td colspan="5" class="text-end fw-semibold" style="font-size:0.85rem;color:#374151">Total da Guia</td>
-              <td class="text-end fw-bold" style="font-size:0.85rem;color:var(--tiss-primary)">R$ ${this.formatCurrency(guia.valorTotalGeral)}</td>
+              <td colspan="6" class="text-end fw-semibold" style="font-size:0.85rem;color:#374151">Total da Guia</td>
+              <td colspan="4" class="text-end fw-bold" style="font-size:0.85rem;color:var(--tiss-primary)">R$ ${this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0)}</td>
             </tr>
           </tfoot>
         </table>

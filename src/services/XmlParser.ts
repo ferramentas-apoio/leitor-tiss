@@ -1,4 +1,4 @@
-import { Guia, Procedimento, ResultadoImportacao } from '../types/Guia';
+import { Guia, Procedimento, ResultadoImportacao, DadosBeneficiario, Profissional, ContratadoExecutante, ValoresGuia } from '../types/Guia';
 import { TissVersaoConfig } from '../types/TissVersao';
 import { createLogger } from './Logger';
 
@@ -29,7 +29,7 @@ export class XmlParser {
     log.info(`Encontradas ${guiasElements.length} guias`);
 
     const guias: Guia[] = guiasElements.map((el) => this.extrairGuia(el));
-    const totalGeral = guias.reduce((sum, g) => sum + g.valorTotalGeral, 0);
+    const totalGeral = guias.reduce((sum, g) => sum + this.parseNumber(g.valores.valorTotalGeral), 0);
 
     log.info(`Parse concluido. Total guias: ${guias.length}, Total valor: ${totalGeral}`);
 
@@ -129,40 +129,106 @@ export class XmlParser {
    * Extrai um valor numerico de um elemento filho.
    * Retorna 0 se o valor nao puder ser convertido.
    */
-  private getNumber(element: Element, tagWithPrefix: string): number {
-    const text = this.getText(element, tagWithPrefix);
-    const value = parseFloat(text);
-    return Number.isFinite(value) ? value : 0;
+  private parseNumber(value: string): number {
+    const num = parseFloat(value);
+    return Number.isFinite(num) ? num : 0;
   }
 
   /**
    * Extrai todos os dados de uma guia SP/SADT.
    */
   private extrairGuia(guiaElement: Element): Guia {
+    // Dados do Beneficiario
+    const dadosBeneficiario: DadosBeneficiario = {
+      numeroCarteira: this.getText(guiaElement, this.xpath.numeroCarteira),
+      nomeBeneficiario: this.getText(guiaElement, this.xpath.nomeBeneficiario),
+      CNS: this.getText(guiaElement, this.xpath.CNS),
+      atendimentoRN: this.getText(guiaElement, this.xpath.atendimentoRN),
+    };
+
+    // Profissional Solicitante
+    const profissionalSolicitante: Profissional = {
+      nomeProfissional: this.getText(guiaElement, this.xpath.nomeProfissional),
+      codigoConselhoProfissional: this.getText(guiaElement, this.xpath.codigoConselhoProfissional),
+      numeroConselhoProfissional: this.getText(guiaElement, this.xpath.numeroConselhoProfissional),
+      UFConselho: this.getText(guiaElement, this.xpath.UFConselho),
+      CBO: this.getText(guiaElement, this.xpath.CBO),
+    };
+
+    // Contratado Executante
+    const contratadoExecutante: ContratadoExecutante = {
+      nomeContratadoExecutante: this.getText(guiaElement, this.xpath.nomeContratadoExecutante),
+      codigoNaOperadoraExecutante: this.getText(guiaElement, this.xpath.codigoNaOperadoraExecutante),
+    };
+
+    // Profissional Executante
+    const profissionalExecutante: Profissional = {
+      nomeProfissional: '', // Extraido separadamente se necessario
+      codigoConselhoProfissional: '',
+      numeroConselhoProfissional: '',
+      UFConselho: '',
+      CBO: '',
+    };
+
+    // Valores da Guia
+    const valores: ValoresGuia = {
+      valorTotalProcedimentos: this.getText(guiaElement, this.xpath.valorTotalProcedimentos),
+      valorTotalTaxasAlugueis: this.getText(guiaElement, this.xpath.valorTotalTaxasAlugueis),
+      valorTotalMateriais: this.getText(guiaElement, this.xpath.valorTotalMateriais),
+      valorTotalOPME: this.getText(guiaElement, this.xpath.valorTotalOPME),
+      valorTotalMedicamentos: this.getText(guiaElement, this.xpath.valorTotalMedicamentos),
+      valorTotalGasesMedicinais: this.getText(guiaElement, this.xpath.valorTotalGasesMedicinais),
+      valorTotalGeral: this.getText(guiaElement, this.xpath.valorTotalGeral),
+    };
+
     const guia: Guia = {
+      // Cabecalho da Transacao
+      sequencialTransacao: this.getText(guiaElement, this.xpath.sequencialTransacao),
+      dataRegistroTransacao: this.getText(guiaElement, this.xpath.dataRegistroTransacao),
+      horaRegistroTransacao: this.getText(guiaElement, this.xpath.horaRegistroTransacao),
+      
+      // Cabecalho da Guia
       guiaPrincipal: this.getText(guiaElement, this.xpath.guiaPrincipal),
       numeroGuiaPrestador: this.getText(guiaElement, this.xpath.numeroGuiaPrestador),
       numeroGuiaOperadora: this.getText(guiaElement, this.xpath.numeroGuiaOperadora),
-      numeroCarteira: this.getText(guiaElement, this.xpath.numeroCarteira),
+      
+      // Dados do Beneficiario
+      dadosBeneficiario,
+      
+      // Dados da Autorizacao
       dataAutorizacao: this.getText(guiaElement, this.xpath.dataAutorizacao),
       senha: this.getText(guiaElement, this.xpath.senha),
       dataValidadeSenha: this.getText(guiaElement, this.xpath.dataValidadeSenha),
-      nomeProfissional: this.getText(guiaElement, this.xpath.nomeProfissional),
+      
+      // Dados do Solicitante
+      profissionalSolicitante,
       nomeContratadoSolicitante: this.getText(guiaElement, this.xpath.nomeContratadoSolicitante),
       dataSolicitacao: this.getText(guiaElement, this.xpath.dataSolicitacao),
       caraterAtendimento: this.getText(guiaElement, this.xpath.caraterAtendimento),
       indicacaoClinica: this.getText(guiaElement, this.xpath.indicacaoClinica),
+      
+      // Dados do Executante
+      contratadoExecutante,
+      CNES: this.getText(guiaElement, this.xpath.CNES),
+      profissionalExecutante,
+      
+      // Dados do Atendimento
       tipoAtendimento: this.getText(guiaElement, this.xpath.tipoAtendimento),
       regimeAtendimento: this.getText(guiaElement, this.xpath.regimeAtendimento),
-      CNES: this.getText(guiaElement, this.xpath.CNES),
-      valorTotalGeral: this.getNumber(guiaElement, this.xpath.valorTotalGeral),
+      tipoConsulta: this.getText(guiaElement, this.xpath.tipoConsulta),
+      observacao: this.getText(guiaElement, this.xpath.observacao),
+      
+      // Valores
+      valores,
+      
+      // Procedimentos
       procedimentos: this.extrairProcedimentos(guiaElement),
     };
 
     log.debug('Guia extraida', {
       guiaPrincipal: guia.guiaPrincipal,
-      numeroCarteira: guia.numeroCarteira,
-      valorTotalGeral: guia.valorTotalGeral,
+      numeroCarteira: guia.dadosBeneficiario.numeroCarteira,
+      valorTotalGeral: guia.valores.valorTotalGeral,
       procedimentos: guia.procedimentos.length,
     });
 
@@ -191,6 +257,10 @@ export class XmlParser {
       quantidadeExecutada: this.getText(proc, this.xpath.quantidadeExecutada),
       valorUnitario: this.getText(proc, this.xpath.valorUnitario),
       valorTotal: this.getText(proc, this.xpath.valorTotal),
+      reducaoAcrescimo: this.getText(proc, this.xpath.reducaoAcrescimo),
+      grauParticipacao: this.getText(proc, this.xpath.grauParticipacao),
+      viaAcesso: this.getText(proc, this.xpath.viaAcesso),
+      tecnicaUtilizada: this.getText(proc, this.xpath.tecnicaUtilizada),
     }));
   }
 }

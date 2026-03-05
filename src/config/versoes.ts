@@ -11,29 +11,68 @@ import { TissVersoes, TissXPath } from '../types/TissVersao';
  * com o schema oficial - o sistema trata graciosamente retornando string vazia.
  */
 const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
+  // Cabecalho da Transacao
+  sequencialTransacao: 'ans:sequencialTransacao',
+  dataRegistroTransacao: 'ans:dataRegistroTransacao',
+  horaRegistroTransacao: 'ans:horaRegistroTransacao',
+  
+  // Cabecalho da Guia
   cabecalhoGuia: 'ans:cabecalhoGuia',
   guiaPrincipal: 'ans:guiaPrincipal',
   numeroGuiaPrestador: 'ans:numeroGuiaPrestador',
+  
+  // Dados da Autorizacao
   dadosAutorizacao: 'ans:dadosAutorizacao',
   numeroGuiaOperadora: 'ans:numeroGuiaOperadora',
   dataAutorizacao: 'ans:dataAutorizacao',
   senha: 'ans:senha',
   dataValidadeSenha: 'ans:dataValidadeSenha',
+  
+  // Dados do Beneficiario
   dadosBeneficiario: 'ans:dadosBeneficiario',
   numeroCarteira: 'ans:numeroCarteira',
+  nomeBeneficiario: 'ans:nomeBeneficiario',
+  CNS: 'ans:CNS',
+  atendimentoRN: 'ans:atendimentoRN',
+  
+  // Dados do Solicitante
   dadosSolicitante: 'ans:dadosSolicitante',
   nomeContratadoSolicitante: 'ans:nomeContratadoSolicitante',
   profissionalSolicitante: 'ans:profissionalSolicitante',
   nomeProfissional: 'ans:nomeProfissional',
+  codigoConselhoProfissional: 'ans:codigoConselhoProfissional',
+  numeroConselhoProfissional: 'ans:numeroConselhoProfissional',
+  UFConselho: 'ans:UFConselho',
+  CBO: 'ans:CBO',
   dadosSolicitacao: 'ans:dadosSolicitacao',
   dataSolicitacao: 'ans:dataSolicitacao',
   caraterAtendimento: 'ans:caraterAtendimento',
   indicacaoClinica: 'ans:indicacaoClinica',
+  
+  // Dados do Executante
   dadosExecutante: 'ans:dadosExecutante',
+  nomeContratadoExecutante: 'ans:nomeContratadoExecutante',
+  codigoNaOperadoraExecutante: 'ans:codigoNaOperadoraExecutante',
   CNES: 'ans:CNES',
+  profissionalExecutante: 'ans:profissionalExecutante',
+  
+  // Dados do Atendimento
   dadosAtendimento: 'ans:dadosAtendimento',
   tipoAtendimento: 'ans:tipoAtendimento',
   regimeAtendimento: 'ans:regimeAtendimento',
+  tipoConsulta: 'ans:tipoConsulta',
+  observacao: 'ans:observacao',
+  
+  // Valores
+  valorTotalProcedimentos: 'ans:valorTotalProcedimentos',
+  valorTotalTaxasAlugueis: 'ans:valorTotalTaxasAlugueis',
+  valorTotalMateriais: 'ans:valorTotalMateriais',
+  valorTotalOPME: 'ans:valorTotalOPME',
+  valorTotalMedicamentos: 'ans:valorTotalMedicamentos',
+  valorTotalGasesMedicinais: 'ans:valorTotalGasesMedicinais',
+  valorTotalGeral: 'ans:valorTotalGeral',
+  
+  // Procedimentos
   procedimentosExecutados: 'ans:procedimentosExecutados',
   procedimentoExecutado: 'ans:procedimentoExecutado',
   sequencialItem: 'ans:sequencialItem',
@@ -47,7 +86,12 @@ const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
   quantidadeExecutada: 'ans:quantidadeExecutada',
   valorUnitario: 'ans:valorUnitario',
   valorTotal: 'ans:valorTotal',
-  valorTotalGeral: 'ans:valorTotalGeral',
+  reducaoAcrescimo: 'ans:reducaoAcrescimo',
+  grauParticipacao: 'ans:grauParticipacao',
+  viaAcesso: 'ans:viaAcesso',
+  tecnicaUtilizada: 'ans:tecnicaUtilizada',
+  
+  // Padrao
   padrao: 'ans:Padrao',
 };
 

@@ -3,30 +3,69 @@
  * Cada propriedade representa um elemento XML esperado no arquivo TISS.
  */
 export interface TissXPath {
+  // Cabecalho da Transacao
+  readonly sequencialTransacao: string;
+  readonly dataRegistroTransacao: string;
+  readonly horaRegistroTransacao: string;
+  
+  // Cabecalho da Guia
   readonly guiaSP_SADT: string;
   readonly cabecalhoGuia: string;
   readonly guiaPrincipal: string;
   readonly numeroGuiaPrestador: string;
+  
+  // Dados da Autorizacao
   readonly dadosAutorizacao: string;
   readonly numeroGuiaOperadora: string;
   readonly dataAutorizacao: string;
   readonly senha: string;
   readonly dataValidadeSenha: string;
+  
+  // Dados do Beneficiario
   readonly dadosBeneficiario: string;
   readonly numeroCarteira: string;
+  readonly nomeBeneficiario: string;
+  readonly CNS: string;
+  readonly atendimentoRN: string;
+  
+  // Dados do Solicitante
   readonly dadosSolicitante: string;
   readonly nomeContratadoSolicitante: string;
   readonly profissionalSolicitante: string;
   readonly nomeProfissional: string;
+  readonly codigoConselhoProfissional: string;
+  readonly numeroConselhoProfissional: string;
+  readonly UFConselho: string;
+  readonly CBO: string;
   readonly dadosSolicitacao: string;
   readonly dataSolicitacao: string;
   readonly caraterAtendimento: string;
   readonly indicacaoClinica: string;
+  
+  // Dados do Executante
   readonly dadosExecutante: string;
+  readonly nomeContratadoExecutante: string;
+  readonly codigoNaOperadoraExecutante: string;
   readonly CNES: string;
+  readonly profissionalExecutante: string;
+  
+  // Dados do Atendimento
   readonly dadosAtendimento: string;
   readonly tipoAtendimento: string;
   readonly regimeAtendimento: string;
+  readonly tipoConsulta: string;
+  readonly observacao: string;
+  
+  // Valores
+  readonly valorTotalProcedimentos: string;
+  readonly valorTotalTaxasAlugueis: string;
+  readonly valorTotalMateriais: string;
+  readonly valorTotalOPME: string;
+  readonly valorTotalMedicamentos: string;
+  readonly valorTotalGasesMedicinais: string;
+  readonly valorTotalGeral: string;
+  
+  // Procedimentos
   readonly procedimentosExecutados: string;
   readonly procedimentoExecutado: string;
   readonly sequencialItem: string;
@@ -40,7 +79,12 @@ export interface TissXPath {
   readonly quantidadeExecutada: string;
   readonly valorUnitario: string;
   readonly valorTotal: string;
-  readonly valorTotalGeral: string;
+  readonly reducaoAcrescimo: string;
+  readonly grauParticipacao: string;
+  readonly viaAcesso: string;
+  readonly tecnicaUtilizada: string;
+  
+  // Padrao
   readonly padrao: string;
 }
 
