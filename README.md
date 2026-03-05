@@ -1,6 +1,13 @@
 # Leitor TISS
 
+[![Deploy GitHub Pages](https://github.com/ferramentas-apoio/leitor-tiss/actions/workflows/deploy.yml/badge.svg)](https://github.com/ferramentas-apoio/leitor-tiss/actions/workflows/deploy.yml)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Acessar-brightgreen)](https://ferramentas-apoio.github.io/leitor-tiss/)
+
 Leitor TISS é uma ferramenta web desenvolvida para facilitar a importação e visualização de arquivos XML no padrão TISS (Troca de Informação de Saúde Suplementar), utilizado por prestadores de serviços de saúde e operadoras de planos de saúde no Brasil.
+
+## Acessar a aplicação
+
+A aplicação está disponível online em: **[https://ferramentas-apoio.github.io/leitor-tiss/](https://ferramentas-apoio.github.io/leitor-tiss/)**
 
 ## O que é o padrão TISS?
 
