@@ -1,5 +1,6 @@
 /**
  * Interfaces de dados extraidos de arquivos TISS.
+ * Baseado no schema oficial TISS 4.03.00 da ANS
  */
 
 /** Procedimento executado dentro de uma guia TISS */
@@ -20,14 +21,11 @@ export interface Procedimento {
   readonly valorUnitario: string;
   readonly valorTotal: string;
   
-  // Campos adicionais
+  // Campo adicional do procedimento
   readonly reducaoAcrescimo: string;
-  readonly grauParticipacao: string;
-  readonly viaAcesso: string;
-  readonly tecnicaUtilizada: string;
 }
 
-/** Dados do profissional */
+/** Dados do profissional (solicitante ou executante) */
 export interface Profissional {
   readonly nomeProfissional: string;
   readonly codigoConselhoProfissional: string;
@@ -39,25 +37,16 @@ export interface Profissional {
 /** Dados do beneficiario */
 export interface DadosBeneficiario {
   readonly numeroCarteira: string;
-  readonly nomeBeneficiario: string;
-  readonly CNS: string;
   readonly atendimentoRN: string;
-}
-
-/** Dados do contratado executante */
-export interface ContratadoExecutante {
-  readonly nomeContratadoExecutante: string;
-  readonly codigoNaOperadoraExecutante: string;
 }
 
 /** Valores da guia */
 export interface ValoresGuia {
-  readonly valorTotalProcedimentos: string;
-  readonly valorTotalTaxasAlugueis: string;
-  readonly valorTotalMateriais: string;
-  readonly valorTotalOPME: string;
-  readonly valorTotalMedicamentos: string;
-  readonly valorTotalGasesMedicinais: string;
+  readonly valorProcedimentos: string;
+  readonly valorDiarias: string;
+  readonly valorTaxasAlugueis: string;
+  readonly valorMateriais: string;
+  readonly valorMedicamentos: string;
   readonly valorTotalGeral: string;
 }
 
@@ -78,32 +67,34 @@ export interface Guia {
   // Cabecalho da Guia
   readonly guiaPrincipal: string;
   readonly numeroGuiaPrestador: string;
-  readonly numeroGuiaOperadora: string;
-  
-  // Dados do Beneficiario
-  readonly dadosBeneficiario: DadosBeneficiario;
+  readonly registroANS: string;
   
   // Dados da Autorizacao
+  readonly numeroGuiaOperadora: string;
   readonly dataAutorizacao: string;
   readonly senha: string;
   readonly dataValidadeSenha: string;
   
+  // Dados do Beneficiario
+  readonly dadosBeneficiario: DadosBeneficiario;
+  
   // Dados do Solicitante
   readonly profissionalSolicitante: Profissional;
+  readonly codigoContratadoSolicitante: string;
   readonly nomeContratadoSolicitante: string;
   readonly dataSolicitacao: string;
   readonly caraterAtendimento: string;
   readonly indicacaoClinica: string;
   
   // Dados do Executante
-  readonly contratadoExecutante: ContratadoExecutante;
+  readonly codigoContratadoExecutante: string;
   readonly CNES: string;
-  readonly profissionalExecutante: Profissional;
   
   // Dados do Atendimento
   readonly tipoAtendimento: string;
   readonly regimeAtendimento: string;
   readonly tipoConsulta: string;
+  readonly indicacaoAcidente: string;
   readonly observacao: string;
   
   // Valores

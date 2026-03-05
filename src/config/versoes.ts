@@ -51,10 +51,7 @@ const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
   
   // Dados do Executante
   dadosExecutante: 'ans:dadosExecutante',
-  nomeContratadoExecutante: 'ans:nomeContratadoExecutante',
-  codigoNaOperadoraExecutante: 'ans:codigoNaOperadoraExecutante',
   CNES: 'ans:CNES',
-  profissionalExecutante: 'ans:profissionalExecutante',
   
   // Dados do Atendimento
   dadosAtendimento: 'ans:dadosAtendimento',
@@ -67,9 +64,7 @@ const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
   valorTotalProcedimentos: 'ans:valorTotalProcedimentos',
   valorTotalTaxasAlugueis: 'ans:valorTotalTaxasAlugueis',
   valorTotalMateriais: 'ans:valorTotalMateriais',
-  valorTotalOPME: 'ans:valorTotalOPME',
   valorTotalMedicamentos: 'ans:valorTotalMedicamentos',
-  valorTotalGasesMedicinais: 'ans:valorTotalGasesMedicinais',
   valorTotalGeral: 'ans:valorTotalGeral',
   
   // Procedimentos
@@ -87,9 +82,6 @@ const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
   valorUnitario: 'ans:valorUnitario',
   valorTotal: 'ans:valorTotal',
   reducaoAcrescimo: 'ans:reducaoAcrescimo',
-  grauParticipacao: 'ans:grauParticipacao',
-  viaAcesso: 'ans:viaAcesso',
-  tecnicaUtilizada: 'ans:tecnicaUtilizada',
   
   // Padrao
   padrao: 'ans:Padrao',

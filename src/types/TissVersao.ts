@@ -44,10 +44,7 @@ export interface TissXPath {
   
   // Dados do Executante
   readonly dadosExecutante: string;
-  readonly nomeContratadoExecutante: string;
-  readonly codigoNaOperadoraExecutante: string;
   readonly CNES: string;
-  readonly profissionalExecutante: string;
   
   // Dados do Atendimento
   readonly dadosAtendimento: string;
@@ -60,9 +57,7 @@ export interface TissXPath {
   readonly valorTotalProcedimentos: string;
   readonly valorTotalTaxasAlugueis: string;
   readonly valorTotalMateriais: string;
-  readonly valorTotalOPME: string;
   readonly valorTotalMedicamentos: string;
-  readonly valorTotalGasesMedicinais: string;
   readonly valorTotalGeral: string;
   
   // Procedimentos
@@ -80,9 +75,6 @@ export interface TissXPath {
   readonly valorUnitario: string;
   readonly valorTotal: string;
   readonly reducaoAcrescimo: string;
-  readonly grauParticipacao: string;
-  readonly viaAcesso: string;
-  readonly tecnicaUtilizada: string;
   
   // Padrao
   readonly padrao: string;

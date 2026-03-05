@@ -672,7 +672,7 @@ export class UIManager {
         [guia.guiaPrincipal, ''],
         [guia.numeroGuiaPrestador, ''],
         [guia.dadosBeneficiario.numeroCarteira, ''],
-        [this.formatDate(guia.dataAutorizacao), ''],
+        [this.formatDate(guia.dataAutorizacao) || '-', ''],
         [this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0), 'text-end'],
       ];
 
@@ -806,190 +806,87 @@ export class UIManager {
         <span class="badge bg-light text-dark border version-badge">
           Guia ${index + 1} de ${lote.guias.length}
         </span>
-        <span class="ms-auto fw-semibold" style="color: var(--tiss-primary);">R$ ${this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0)}</span>
+
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-hash me-1"></i>Transação</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Sequencial Transação</strong>
-            <span>${escapeHtml(guia.sequencialTransacao)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Data Registro</strong>
-            <span>${escapeHtml(this.formatDate(guia.dataRegistroTransacao))}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Hora Registro</strong>
-            <span>${escapeHtml(guia.horaRegistroTransacao)}</span>
-          </div>
+          ${this.field('Sequencial', guia.sequencialTransacao)}
+          ${this.field('Data Registro', this.formatDate(guia.dataRegistroTransacao))}
+          ${this.field('Hora Registro', guia.horaRegistroTransacao)}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-card-heading me-1"></i>Cabeçalho</h6>
         <div class="row">
-          <div class="col-md-6 detail-field">
-            <strong>Guia Principal</strong>
-            <span>${escapeHtml(guia.guiaPrincipal)}</span>
-          </div>
-          <div class="col-md-6 detail-field">
-            <strong>Nº Guia Prestador</strong>
-            <span>${escapeHtml(guia.numeroGuiaPrestador)}</span>
-          </div>
-          <div class="col-md-6 detail-field">
-            <strong>Nº Guia Operadora</strong>
-            <span>${escapeHtml(guia.numeroGuiaOperadora)}</span>
-          </div>
+          ${this.field('Registro ANS', guia.registroANS)}
+          ${this.field('Guia Principal', guia.guiaPrincipal)}
+          ${this.field('Nº Guia Prestador', guia.numeroGuiaPrestador)}
+          ${this.field('Nº Guia Operadora', guia.numeroGuiaOperadora)}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-person-badge me-1"></i>Beneficiário</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Nº Carteira</strong>
-            <span>${escapeHtml(guia.dadosBeneficiario.numeroCarteira)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Nome Beneficiário</strong>
-            <span>${escapeHtml(guia.dadosBeneficiario.nomeBeneficiario)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>CNS</strong>
-            <span>${escapeHtml(guia.dadosBeneficiario.CNS)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Atendimento RN</strong>
-            <span>${escapeHtml(guia.dadosBeneficiario.atendimentoRN)}</span>
-          </div>
+          ${this.field('Nº Carteira', guia.dadosBeneficiario.numeroCarteira)}
+          ${this.field('Atendimento RN', guia.dadosBeneficiario.atendimentoRN)}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-key me-1"></i>Autorização</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Data Autorização</strong>
-            <span>${escapeHtml(this.formatDate(guia.dataAutorizacao))}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Senha</strong>
-            <span>${escapeHtml(guia.senha)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Validade da Senha</strong>
-            <span>${escapeHtml(this.formatDate(guia.dataValidadeSenha))}</span>
-          </div>
+          ${this.field('Data Autorização', this.formatDate(guia.dataAutorizacao))}
+          ${this.field('Senha', guia.senha)}
+          ${this.field('Validade da Senha', this.formatDate(guia.dataValidadeSenha))}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-person me-1"></i>Solicitante</h6>
         <div class="row">
-          <div class="col-md-6 detail-field">
-            <strong>Profissional</strong>
-            <span>${escapeHtml(guia.profissionalSolicitante.nomeProfissional)}</span>
-          </div>
-          <div class="col-md-6 detail-field">
-            <strong>Conselho Profissional</strong>
-            <span>${escapeHtml(guia.profissionalSolicitante.codigoConselhoProfissional)} - ${escapeHtml(guia.profissionalSolicitante.numeroConselhoProfissional)}/${escapeHtml(guia.profissionalSolicitante.UFConselho)}</span>
-          </div>
-          <div class="col-md-6 detail-field">
-            <strong>CBO</strong>
-            <span>${escapeHtml(guia.profissionalSolicitante.CBO)}</span>
-          </div>
-          <div class="col-md-6 detail-field">
-            <strong>Contratado</strong>
-            <span>${escapeHtml(guia.nomeContratadoSolicitante)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Data Solicitação</strong>
-            <span>${escapeHtml(this.formatDate(guia.dataSolicitacao))}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Caráter Atendimento</strong>
-            <span>${escapeHtml(guia.caraterAtendimento)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Indicação Clínica</strong>
-            <span>${escapeHtml(guia.indicacaoClinica)}</span>
-          </div>
+          ${this.field('Contratado', guia.nomeContratadoSolicitante, 'col-md-6')}
+          ${this.field('Código Contratado', guia.codigoContratadoSolicitante, 'col-md-6')}
+          ${this.field('Profissional', guia.profissionalSolicitante.nomeProfissional, 'col-md-6')}
+          ${this.field('Conselho', guia.profissionalSolicitante.codigoConselhoProfissional && guia.profissionalSolicitante.numeroConselhoProfissional ? `${guia.profissionalSolicitante.codigoConselhoProfissional} - ${guia.profissionalSolicitante.numeroConselhoProfissional}/${guia.profissionalSolicitante.UFConselho}` : '', 'col-md-6')}
+          ${this.field('CBO', guia.profissionalSolicitante.CBO)}
+          ${this.field('Data Solicitação', this.formatDate(guia.dataSolicitacao))}
+          ${this.field('Caráter Atendimento', guia.caraterAtendimento)}
+          ${this.field('Indicação Clínica', guia.indicacaoClinica, 'col-md-6')}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-hospital me-1"></i>Executante</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Nome Contratado</strong>
-            <span>${escapeHtml(guia.contratadoExecutante.nomeContratadoExecutante)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Código na Operadora</strong>
-            <span>${escapeHtml(guia.contratadoExecutante.codigoNaOperadoraExecutante)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>CNES</strong>
-            <span>${escapeHtml(guia.CNES)}</span>
-          </div>
+          ${this.field('Código na Operadora', guia.codigoContratadoExecutante, 'col-md-6')}
+          ${this.field('CNES', guia.CNES, 'col-md-6')}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-clipboard2-pulse me-1"></i>Atendimento</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Tipo Atendimento</strong>
-            <span>${escapeHtml(guia.tipoAtendimento)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Regime Atendimento</strong>
-            <span>${escapeHtml(guia.regimeAtendimento)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Tipo Consulta</strong>
-            <span>${escapeHtml(guia.tipoConsulta)}</span>
-          </div>
-          <div class="col-12 detail-field">
-            <strong>Observação</strong>
-            <span>${escapeHtml(guia.observacao)}</span>
-          </div>
+          ${this.field('Tipo Atendimento', guia.tipoAtendimento)}
+          ${this.field('Indicação Acidente', guia.indicacaoAcidente)}
+          ${this.field('Regime Atendimento', guia.regimeAtendimento)}
+          ${this.field('Tipo Consulta', guia.tipoConsulta)}
+          ${this.field('Observação', guia.observacao, 'col-12')}
         </div>
       </div>
 
       <div class="detail-section">
         <h6><i class="bi bi-currency-dollar me-1"></i>Valores</h6>
         <div class="row">
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Procedimentos</strong>
-            <span>${escapeHtml(guia.valores.valorTotalProcedimentos)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Taxas/Alugueis</strong>
-            <span>${escapeHtml(guia.valores.valorTotalTaxasAlugueis)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Materiais</strong>
-            <span>${escapeHtml(guia.valores.valorTotalMateriais)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total OPME</strong>
-            <span>${escapeHtml(guia.valores.valorTotalOPME)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Medicamentos</strong>
-            <span>${escapeHtml(guia.valores.valorTotalMedicamentos)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Gases Medicinais</strong>
-            <span>${escapeHtml(guia.valores.valorTotalGasesMedicinais)}</span>
-          </div>
-          <div class="col-md-4 detail-field">
-            <strong>Valor Total Geral</strong>
-            <span class="fw-bold text-primary">${escapeHtml(guia.valores.valorTotalGeral)}</span>
-          </div>
+          ${this.fieldCurrency('Procedimentos', guia.valores.valorProcedimentos)}
+          ${this.fieldCurrency('Diárias', guia.valores.valorDiarias)}
+          ${this.fieldCurrency('Taxas/Aluguéis', guia.valores.valorTaxasAlugueis)}
+          ${this.fieldCurrency('Materiais', guia.valores.valorMateriais)}
+          ${this.fieldCurrency('Medicamentos', guia.valores.valorMedicamentos)}
+          ${this.fieldCurrency('Total Geral', guia.valores.valorTotalGeral, 'col-md-4', '', true)}
         </div>
       </div>
 
@@ -1013,12 +910,9 @@ export class UIManager {
         <td>${escapeHtml(proc.codigoTabela)}-${escapeHtml(proc.codigoProcedimento)}</td>
         <td>${escapeHtml(proc.descricaoProcedimento)}</td>
         <td class="text-center">${parseInt(proc.quantidadeExecutada) || 0}</td>
+        <td class="text-center">${escapeHtml(this.formatNumber(proc.reducaoAcrescimo))}</td>
         <td class="text-end">${this.formatCurrency(parseFloat(proc.valorUnitario) || 0)}</td>
         <td class="text-end">${this.formatCurrency(parseFloat(proc.valorTotal) || 0)}</td>
-        <td class="text-center">${escapeHtml(proc.grauParticipacao)}</td>
-        <td class="text-center">${escapeHtml(proc.reducaoAcrescimo)}</td>
-        <td>${escapeHtml(proc.viaAcesso)}</td>
-        <td>${escapeHtml(proc.tecnicaUtilizada)}</td>
       </tr>
     `).join('');
 
@@ -1033,19 +927,16 @@ export class UIManager {
               <th style="${thStyle};min-width:120px">Código</th>
               <th style="${thStyle};min-width:200px">Descrição</th>
               <th class="text-center" style="${thStyle};width:45px">Qtd</th>
+              <th class="text-center" style="${thStyle};width:70px">Red./Acr.</th>
               <th class="text-end" style="${thStyle};width:90px">Valor Unit.</th>
               <th class="text-end" style="${thStyle};width:90px">Valor Total</th>
-              <th class="text-center" style="${thStyle};width:60px">Grau</th>
-              <th class="text-center" style="${thStyle};width:70px">Red./Acr.</th>
-              <th style="${thStyle};width:90px">Via Acesso</th>
-              <th style="${thStyle};width:100px">Técnica</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
           <tfoot>
             <tr style="background: var(--tiss-primary-soft);">
               <td colspan="6" class="text-end fw-semibold" style="font-size:0.85rem;color:#374151">Total da Guia</td>
-              <td colspan="4" class="text-end fw-bold" style="font-size:0.85rem;color:var(--tiss-primary)">R$ ${this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0)}</td>
+              <td class="text-end" style="font-size:0.85rem;color:var(--tiss-primary)">R$ ${this.formatCurrency(parseFloat(guia.valores.valorTotalGeral) || 0)}</td>
             </tr>
           </tfoot>
         </table>
@@ -1065,11 +956,53 @@ export class UIManager {
   }
 
   private formatDate(dateStr: string): string {
-    if (!dateStr || dateStr.length !== 10) return dateStr || '-';
+    if (!dateStr || dateStr.length !== 10) return '';
     const parts = dateStr.split('-');
     if (parts.length === 3) {
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dateStr;
+  }
+
+  /**
+   * Formata string numérica TISS removendo zeros à esquerda
+   * e decimais desnecessários (ex: "00000001.00" -> "1").
+   */
+  private formatNumber(value: string): string {
+    if (!value) return '';
+    const num = parseFloat(value);
+    if (!Number.isFinite(num)) return value;
+    return Number.isInteger(num) ? String(num) : num.toString();
+  }
+
+  /**
+   * Gera um campo de detalhe somente se o valor for preenchido.
+   * Retorna string vazia caso contrário, evitando campos em branco no modal.
+   */
+  private field(label: string, value: string, colClass = 'col-md-4'): string {
+    if (!value) return '';
+    return `
+      <div class="${colClass} detail-field">
+        <strong>${label}</strong>
+        <span>${escapeHtml(value)}</span>
+      </div>`;
+  }
+
+  /**
+   * Gera um campo de detalhe com valor monetário formatado.
+   * Converte strings TISS como "00000115.72" para "R$ 115,72".
+   * Oculta o campo se o valor for vazio ou zero.
+   */
+  private fieldCurrency(label: string, value: string, colClass = 'col-md-4', spanClass = '', showZero = false): string {
+    if (!value) return '';
+    const num = parseFloat(value);
+    if (!Number.isFinite(num)) return '';
+    if (num === 0 && !showZero) return '';
+    const formatted = `R$ ${this.formatCurrency(num)}`;
+    return `
+      <div class="${colClass} detail-field">
+        <strong>${label}</strong>
+        <span${spanClass ? ` class="${spanClass}"` : ''}>${escapeHtml(formatted)}</span>
+      </div>`;
   }
 }
