@@ -43,7 +43,7 @@ npm install
 
 ## Como executar
 
-###Modo de desenvolvimento
+### Modo de desenvolvimento
 
 Para iniciar o servidor de desenvolvimento, execute:
 
