@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ferramenta web para leitura e visualização de arquivos XML no padrão TISS. Importe arquivos e visualize todas as guias, procedimentos e valores.">
+  <title>Leitor TISS - Visualizador de XML TISS</title>
+  <link rel="icon" type="image/svg+xml" href="/leitor-tiss/favicon.svg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --tiss-primary: #0d6efd;
+      --tiss-primary-soft: rgba(13,110,253,0.08);
+      --tiss-gradient: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+      --card-radius: 12px;
+      --card-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    body {
+      background-color: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1.1rem;
+    }
+
+    /* Upload drop zone */
+    .drop-zone {
+      border: 2px dashed #c5ccd3;
+      border-radius: var(--card-radius);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: #fff;
+      position: relative;
+    }
+    .drop-zone:hover {
+      border-color: var(--tiss-primary);
+      background: #f6f9ff;
+    }
+    .drop-zone.drag-over {
+      border-color: var(--tiss-primary);
+      background: #dbeafe;
+      border-style: solid;
+      transform: scale(1.01);
+    }
+    .drop-zone-icon {
+      font-size: 2.5rem;
+      color: #9ca3af;
+      margin-bottom: 0.75rem;
+      transition: color 0.25s;
+    }
+    .drop-zone:hover .drop-zone-icon {
+      color: var(--tiss-primary);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Summary cards */
+    .summary-card {
+      border: none;
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .summary-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+    }
+    .summary-card .card-body {
+      padding: 1.25rem 1.5rem;
+    }
+    .summary-file-name {
+      font-size: 0.92rem;
+      color: #212529;
+      word-break: break-word;
+      font-weight: 600;
+    }
+    .summary-card .card-accent {
+      height: 3px;
+      border-radius: var(--card-radius) var(--card-radius) 0 0;
+    }
+    .stat-item {
+      padding: 0.6rem 0.25rem;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6c757d;
+      margin-bottom: 0.15rem;
+    }
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #212529;
+      line-height: 1.2;
+    }
+    .stat-value-accent {
+      color: var(--tiss-primary);
+    }
+    .stat-value-success {
+      color: #198754;
+    }
+
+    /* Table card */
+    .table-card {
+      border: none;
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+    .table-card .card-header {
+      background: #fff;
+      border-bottom: 1px solid #e9ecef;
+      padding: 0.85rem 1.25rem;
+    }
+    .table-card .table {
+      margin-bottom: 0;
+    }
+    .table-card .table thead th {
+      background: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6c757d;
+      padding: 0.7rem 0.75rem;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .table-card .table tbody td {
+      padding: 0.65rem 0.75rem;
+      vertical-align: middle;
+      font-size: 0.88rem;
+      color: #374151;
+    }
+    .table-card .table tbody tr {
+      transition: background 0.15s;
+    }
+    .table-card .table tbody tr:hover {
+      background: var(--tiss-primary-soft) !important;
+    }
+    .table-footer {
+      background: #fafbfc;
+      border-top: 1px solid #e9ecef;
+    }
+
+    /* Nav pills for file tabs */
+    .file-tabs .nav-link {
+      border-radius: 8px;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      color: #495057;
+      transition: all 0.15s;
+    }
+    .file-tabs .nav-link:hover {
+      background: #e9ecef;
+    }
+    .file-tabs .nav-link.active {
+      background: var(--tiss-primary);
+      color: #fff;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(6px);
+      z-index: 1060;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .loading-overlay .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    /* Search input */
+    .search-input {
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      padding-left: 2.5rem;
+      font-size: 0.88rem;
+    }
+    .search-input:focus {
+      border-color: var(--tiss-primary);
+      box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+    }
+    .search-wrapper {
+      position: relative;
+    }
+    .search-wrapper .bi-search {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #adb5bd;
+      font-size: 0.88rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6c757d;
+    }
+    .empty-state i {
+      font-size: 3rem;
+      opacity: 0.35;
+      margin-bottom: 1rem;
+    }
+
+    /* Modal improvements */
+    .modal-detail-header {
+      background: var(--tiss-gradient);
+      color: #fff;
+      border-bottom: none;
+    }
+    .detail-section {
+      margin-bottom: 1.25rem;
+    }
+    .detail-section h6 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--tiss-primary);
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .detail-field {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .detail-field strong {
+      color: #6c757d;
+      font-size: 0.78rem;
+      display: block;
+    }
+    .detail-field span {
+      color: #212529;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+      border-radius: 6px;
+      margin: 0 2px;
+      border: none;
+      color: #495057;
+      font-size: 0.82rem;
+      padding: 0.3rem 0.65rem;
+    }
+    .pagination .page-item.active .page-link {
+      background: var(--tiss-primary);
+      color: #fff;
+    }
+    .pagination .page-item.disabled .page-link {
+      background: transparent;
+    }
+
+    /* Toast */
+    .toast-container {
+      z-index: 1100;
+    }
+
+    /* Footer */
+    .app-footer {
+      font-size: 0.76rem;
+      color: #adb5bd;
+      padding: 1.5rem 0;
+      text-align: center;
+    }
+
+    /* Badge version */
+    .version-badge {
+      font-size: 0.75rem;
+      padding: 0.3em 0.6em;
+      border-radius: 6px;
+    }
+
+    /* Button import */
+    .btn-import {
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      gap: 0.4rem;
+    }
+
+    /* Progress in loading */
+    .import-progress {
+      width: 300px;
+      max-width: 80%;
+    }
+    .import-progress .progress {
+      height: 6px;
+      border-radius: 3px;
+    }
+  </style>
+  <script type="module" crossorigin src="/leitor-tiss/assets/index-BdouTNas.js"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand navbar-dark" style="background: var(--tiss-gradient);">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center fw-semibold" href="#">
+        <span class="navbar-brand-icon"><i class="bi bi-file-earmark-medical"></i></span>
+        Leitor TISS
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <button id="clearBtn" class="btn btn-sm btn-outline-light rounded-pill px-3 d-none" title="Limpar dados importados">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpar
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+
+    <!-- Upload Section -->
+    <div id="uploadSection">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept=".xml" multiple>
+            <div class="drop-zone-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+            <h5 class="mb-1">Arraste arquivos XML aqui</h5>
+            <p class="text-muted mb-3">ou clique para selecionar</p>
+            <span class="badge bg-light text-muted border">TISS 4.00.00 &ndash; 4.03.00</span>
+          </div>
+          <div id="fileName" class="text-center text-muted small mt-2"></div>
+          <div class="text-center mt-3">
+            <button id="btnImportar" class="btn btn-primary btn-import d-inline-flex align-items-center">
+              <i class="bi bi-upload"></i> Importar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section (hidden initially) -->
+    <div id="results" class="d-none">
+
+      <!-- Summary Cards -->
+      <div class="row g-3 mb-4" id="summaryRow">
+        <!-- Card: Arquivo atual -->
+        <div id="colArquivo" class="col-12">
+          <div class="card summary-card h-100">
+            <div class="card-accent" style="background: var(--tiss-gradient);"></div>
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <i class="bi bi-file-earmark-medical text-primary"></i>
+                    <span class="summary-file-name" id="nomeArquivo" title=""></span>
+                  </div>
+                  <small id="versaoBadge" class="text-muted"></small>
+                </div>
+                <div class="text-end">
+                  <div class="stat-label">Valor do Arquivo</div>
+                  <div class="stat-value stat-value-accent" id="valorTotalArquivo">R$ 0,00</div>
+                </div>
+              </div>
+              <div class="row text-center g-0">
+                <div class="col-4">
+                  <div class="stat-item">
+                    <div class="stat-label">Guias</div>
+                    <div class="stat-value" id="totalGuias">0</div>
+                  </div>
+                </div>
+                <div class="col-4 border-start border-end">
+                  <div class="stat-item">
+                    <div class="stat-label">Procedimentos</div>
+                    <div class="stat-value" id="totalProcedimentos">0</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-item">
+                    <div class="stat-label">Qtd. Executada</div>
+                    <div class="stat-value" id="totalQtdExecutada">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card: Total Geral (s&oacute; com m&uacute;ltiplos arquivos) -->
+        <div id="totalGeralSection" class="col-md-6 d-none">
+          <div class="card summary-card h-100">
+            <div class="card-accent" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);"></div>
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <i class="bi bi-stack text-success"></i>
+                    <span class="fw-semibold">Total Geral</span>
+                  </div>
+                  <small class="text-muted" id="totalGeralArquivos"></small>
+                </div>
+                <div class="text-end">
+                  <div class="stat-label">Valor Total</div>
+                  <div class="stat-value stat-value-success" id="valorTotalGeral">R$ 0,00</div>
+                </div>
+              </div>
+              <div class="row text-center g-0">
+                <div class="col-4">
+                  <div class="stat-item">
+                    <div class="stat-label">Guias</div>
+                    <div class="stat-value" id="totalGuiasGeral">0</div>
+                  </div>
+                </div>
+                <div class="col-4 border-start border-end">
+                  <div class="stat-item">
+                    <div class="stat-label">Procedimentos</div>
+                    <div class="stat-value" id="totalProcedimentosGeral">0</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-item">
+                    <div class="stat-label">Qtd. Executada</div>
+                    <div class="stat-value" id="totalQtdExecutadaGeral">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Tabs -->
+      <div id="tabsContainer" class="d-none mb-3">
+        <div class="card" style="border:none; border-radius: var(--card-radius); box-shadow: var(--card-shadow);">
+          <div class="card-body py-2 px-3">
+            <nav>
+              <ul class="nav nav-pills file-tabs flex-wrap gap-1" id="fileTabs"></ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table Card -->
+      <div class="card table-card">
+        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <h6 class="mb-0 fw-semibold" style="color: #374151;">
+            <i class="bi bi-table me-1 text-primary opacity-75"></i> Guias SP/SADT
+          </h6>
+          <div class="search-wrapper" style="min-width: 220px; max-width: 320px; flex: 1;">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" class="form-control form-control-sm search-input"
+              placeholder="Buscar guia, carteira...">
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <!-- Empty state -->
+          <div id="emptyState" class="empty-state d-none">
+            <i class="bi bi-inbox d-block"></i>
+            <h6>Nenhuma guia encontrada</h6>
+            <p class="small mb-0">Tente ajustar o filtro de busca.</p>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Guia Principal</th>
+                  <th>N&ordm; Guia Prestador</th>
+                  <th>N&ordm; Carteira</th>
+                  <th>Data Autoriza&ccedil;&atilde;o</th>
+                  <th class="text-end">Valor Total</th>
+                  <th class="text-center" style="width:80px">A&ccedil;&otilde;es</th>
+                </tr>
+              </thead>
+              <tbody id="guiasTable"></tbody>
+            </table>
+          </div>
+          <div class="d-flex flex-wrap align-items-center justify-content-between py-2 px-3 gap-2 table-footer">
+            <div class="d-flex align-items-center gap-2 small text-muted">
+              <label for="itensPorPagina" class="mb-0 text-nowrap">Itens por p&aacute;gina:</label>
+              <select id="itensPorPagina" class="form-select form-select-sm" style="width:auto;">
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+            <nav>
+              <ul class="pagination mb-0" id="pagination"></ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      Leitor TISS &mdash; Importador de XML TISS 4.x
+    </footer>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay d-none">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Importando...</span>
+    </div>
+    <div class="fw-semibold text-dark" id="loadingText">Importando arquivos...</div>
+    <div class="import-progress">
+      <div class="progress">
+        <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+      </div>
+      <div class="text-muted small mt-1 text-center" id="loadingDetail"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastNotification" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastBody"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalhes da Guia -->
+  <div id="modalGuia" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header modal-detail-header">
+          <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Detalhes da Guia</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Erro -->
+  <div id="modalErro" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-danger text-white border-0">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Erro na Importa&ccedil;&atilde;o</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p id="versaoArquivo" class="mb-2"></p>
+          <p id="versaoSelecionada" class="text-muted small mb-0"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Resultado da Importação -->
+  <div id="modalImportacao" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-0" style="background: var(--tiss-gradient); color: #fff;">
+          <h5 class="modal-title"><i class="bi bi-check2-circle me-2"></i>Resultado da Importa&ccedil;&atilde;o</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="importacaoContent"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
