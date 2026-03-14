@@ -444,11 +444,16 @@ export class ControladorGuias {
   private renderizarTabela(): void {
     const guias = this.guiasFiltrados;
     const guiasLote = this.lotes[this.arquivoAtual]?.guias ?? [];
+    
+    // Aplica paginação: pega apenas as guias da página atual
+    const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
+    const fim = inicio + this.itensPorPagina;
+    const guiasPagina = guias.slice(inicio, fim);
 
     this.servicoRenderizacao.renderizarTabelaGuias(
       this.elementos.guiasTable,
       this.elementos.emptyState,
-      guias,
+      guiasPagina,
       guiasLote,
       this.arquivoAtual
     );
