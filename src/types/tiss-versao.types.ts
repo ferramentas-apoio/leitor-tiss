@@ -1,5 +1,5 @@
 /**
- * Definicoes de tipos para o mapeamento de tags XML do padrao TISS.
+ * Definições de tipos para o mapeamento de tags XML do padrão TISS.
  * Cada propriedade representa um elemento XML esperado no arquivo TISS.
  */
 export interface TissXPath {
@@ -81,19 +81,19 @@ export interface TissXPath {
 }
 
 /**
- * Configuracao de uma versao especifica do padrao TISS.
+ * Configuração de uma versão específica do padrão TISS.
  */
 export interface TissVersaoConfig {
-  /** Nome amigavel da versao (ex: "TISS 4.02.00") */
+  /** Nome amigável da versão (ex: "TISS 4.02.00") */
   readonly nome: string;
-  /** Namespace XML utilizado nesta versao */
+  /** Namespace XML utilizado nesta versão */
   readonly namespace: string;
-  /** Mapeamento de tags XML para esta versao */
+  /** Mapeamento de tags XML para esta versão */
   readonly xpath: TissXPath;
 }
 
 /**
- * Mapa de versoes TISS indexado pela string de versao (ex: "4.02.00").
+ * Mapa de versões TISS indexado pela string de versão (ex: "4.02.00").
  */
 export interface TissVersoes {
   readonly [versao: string]: TissVersaoConfig;

@@ -1,1 +1,31 @@
+# Dependências
 node_modules/
+
+# Build
+dist/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# OpenCode (skills locais)
+.opencode/
+
+# Arquivos temporários
+*.tmp
+*.temp

@@ -1,13 +1,13 @@
-import { TissVersoes, TissXPath } from '../types/TissVersao';
+import { TissVersoes, TissXPath } from '../types/tiss-versao.types';
 
 /**
- * Configuracao completa de XPath compartilhada entre todas as versoes TISS 4.x.
- * Todos os elementos seguem o padrao de namespace "ans:" da ANS.
+ * Configuração completa de XPath compartilhada entre todas as versões TISS 4.x.
+ * Todos os elementos seguem o padrão de namespace "ans:" da ANS.
  *
  * Conforme o XSD oficial da ANS (tissComplexTypesV4_XX_XX.xsd), o campo
- * descricaoProcedimento e OBRIGATORIO dentro de ct_procedimentoDados
+ * descricaoProcedimento é OBRIGATÓRIO dentro de ct_procedimentoDados
  * (procedimentoExecutado > procedimento > descricaoProcedimento) em TODAS
- * as versoes 4.x. Arquivos que nao incluem este campo sao nao-conformes
+ * as versões 4.x. Arquivos que não incluem este campo são não-conformes
  * com o schema oficial - o sistema trata graciosamente retornando string vazia.
  */
 const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
@@ -87,13 +87,13 @@ const xpathCompleto: Omit<TissXPath, 'guiaSP_SADT'> = {
   padrao: 'ans:Padrao',
 };
 
-/** Namespace padrao da ANS utilizado em todas as versoes TISS 4.x */
+/** Namespace padrão da ANS utilizado em todas as versões TISS 4.x */
 const TISS_NAMESPACE = 'http://www.ans.gov.br/padroes/tiss/schemas';
 
 /**
- * XPath completo incluindo guiaSP_SADT, identico em todas as versoes 4.x.
- * Todas as versoes compartilham exatamente o mesmo schema de tags XML
- * para guias SP/SADT - a unica variacao real e se o prestador/operadora
+ * XPath completo incluindo guiaSP_SADT, idêntico em todas as versões 4.x.
+ * Todas as versões compartilham exatamente o mesmo schema de tags XML
+ * para guias SP/SADT - a única variação real é se o prestador/operadora
  * opta por preencher campos opcionais como descricaoProcedimento.
  */
 const xpathTiss4: TissXPath = {
@@ -102,14 +102,14 @@ const xpathTiss4: TissXPath = {
 };
 
 /**
- * Mapa de todas as versoes TISS 4.x suportadas pelo sistema.
+ * Mapa de todas as versões TISS 4.x suportadas pelo sistema.
  *
- * Versoes do componente de Comunicacao conforme historico oficial da ANS:
- * - 4.00.00: Publicada em jul/2021 (versao inicial da serie 4)
- * - 4.00.01: Publicada em nov/2021 (correcao da 4.00.00)
- * - 4.01.00: Publicada em set/2022 (atualizacao intermediaria)
- * - 4.02.00: Publicada em mai/2025 (inclui descricaoProcedimento como padrao)
- * - 4.03.00: Publicada em nov/2025 (versao vigente jan/2026)
+ * Versões do componente de Comunicação conforme histórico oficial da ANS:
+ * - 4.00.00: Publicada em jul/2021 (versão inicial da série 4)
+ * - 4.00.01: Publicada em nov/2021 (correção da 4.00.00)
+ * - 4.01.00: Publicada em set/2022 (atualização intermediária)
+ * - 4.02.00: Publicada em mai/2025 (inclui descricaoProcedimento como padrão)
+ * - 4.03.00: Publicada em nov/2025 (versão vigente jan/2026)
  *
  * @see https://www.gov.br/ans/pt-br/assuntos/prestadores/padrao-para-troca-de-informacao-de-saude-suplementar-2013-tiss
  */
@@ -141,12 +141,12 @@ export const TISS_VERSOES: TissVersoes = {
   },
 };
 
-/** Versoes TISS suportadas como array somente leitura */
+/** Versões TISS suportadas como array somente leitura */
 export const VERSOES_SUPORTADAS = Object.keys(TISS_VERSOES) as readonly string[];
 
 /**
- * Retorna o nome amigavel de uma versao TISS.
- * Caso a versao nao seja encontrada, retorna o proprio valor informado.
+ * Retorna o nome amigável de uma versão TISS.
+ * Caso a versão não seja encontrada, retorna o próprio valor informado.
  */
 export function getVersaoTiss(versao: string | null): string {
   if (!versao) return 'Desconhecida';
@@ -154,14 +154,14 @@ export function getVersaoTiss(versao: string | null): string {
 }
 
 /**
- * Retorna todas as versoes TISS suportadas.
+ * Retorna todas as versões TISS suportadas.
  */
 export function getTodasVersoes(): readonly string[] {
   return VERSOES_SUPORTADAS;
 }
 
 /**
- * Verifica se uma versao e suportada pelo sistema.
+ * Verifica se uma versão é suportada pelo sistema.
  */
 export function isVersaoSuportada(versao: string): boolean {
   return versao in TISS_VERSOES;

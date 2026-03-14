@@ -1,6 +1,6 @@
 /**
- * Interfaces de dados extraidos de arquivos TISS.
- * Baseado no schema oficial TISS 4.03.00 da ANS
+ * Interfaces de dados extraídos de arquivos TISS.
+ * Baseado no schema oficial TISS 4.03.00 da ANS.
  */
 
 /** Procedimento executado dentro de uma guia TISS */

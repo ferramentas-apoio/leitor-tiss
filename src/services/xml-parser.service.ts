@@ -1,11 +1,11 @@
-import { Guia, Procedimento, ResultadoImportacao, DadosBeneficiario, Profissional, ValoresGuia } from '../types/Guia';
-import { TissVersaoConfig } from '../types/TissVersao';
-import { createLogger } from './Logger';
+import { Guia, Procedimento, ResultadoImportacao, DadosBeneficiario, Profissional, ValoresGuia } from '../types/guia.types';
+import { TissVersaoConfig } from '../types/tiss-versao.types';
+import { createLogger } from './logger.service';
 
 const log = createLogger('XmlParser');
 
 /**
- * Parser de arquivos XML no padrao TISS.
+ * Parser de arquivos XML no padrão TISS.
  * Utiliza DOMParser nativo do navegador para processar o XML
  * e extrai dados das guias SP/SADT com base no schema oficial da ANS.
  */
